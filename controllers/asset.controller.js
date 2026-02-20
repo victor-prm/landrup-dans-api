@@ -1,11 +1,13 @@
 var { Asset } = require("../models/models");
 var saveFile = require("../services/asset");
+const baseUrl = process.env.NODE_ENV === "production" ? "https://landrup-dans-api-nylt.onrender.com" : "http://localhost:4000/file-bucket";
+/* console.log(baseUrl) */
 
 async function createSingleAsset(req, res, next) {
 	try {
 		let file = saveFile(req.files.file);
 		let asset = await Asset.create({
-			url: "http://localhost:4000/file-bucket/" + file
+			url: `${baseUrl}/file-bucket/${file}`
 		});
 		res.json(asset);
 	} catch (error) {

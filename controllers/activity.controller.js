@@ -2,6 +2,9 @@ const { verify } = require("jsonwebtoken");
 const { sequelize } = require("../config/database");
 var { Activity, Asset, User } = require("../models/models");
 var saveFile = require("../services/asset");
+const baseUrl = process.env.NODE_ENV === "production" ? "https://landrup-dans-api-nylt.onrender.com" : "http://localhost:4000/file-bucket";
+/* console.log(baseUrl) */
+
 
 async function getSingleActivity(req, res, next) {
 	try {
@@ -29,7 +32,7 @@ async function createSingleActivity(req, res, next) {
 	try {
 		let file = saveFile(req.files.file);
 		let asset = await Asset.create({
-			url: "http://localhost:4000/file-bucket/" + file
+			url: `${baseUrl}/file-bucket/${file}`
 		});
 		let activityData = await Activity.create({
 			name: req.fields.name,
@@ -56,7 +59,7 @@ async function updateSingleActivity(req, res, next) {
 		try {
 			let file = saveFile(req.files.file);
 			let asset = await Asset.create({
-				url: "http://localhost:4000/file-bucket/" + file
+				url: `${baseUrl}/file-bucket/${file}`
 			});
 			await Activity.update({ assetId: parseInt(asset.id) }, { where: { id } });
 		} catch (error) {
